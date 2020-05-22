@@ -132,6 +132,7 @@ class User implements UserInterface
     public function setUsername($username): void
     {
         $this->username = $username;
+    
     }
 
     /**
@@ -148,6 +149,8 @@ class User implements UserInterface
     public function setPassword($password)
     {
         $this->password = $password;
+
+        return $this;
     }
 
     /**

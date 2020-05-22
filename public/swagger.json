@@ -1,0 +1,178 @@
+swagger: "2.0"
+info:
+  description: "This is a sample User API. Please check README to get idea how to generate Database and User"
+  version: "1.0.0"
+  title: "Ray Symfony/JWT/Swagger API."
+  license:
+    name: "Apache 2.4"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "127.0.0.1:8000"
+basePath: "/api"
+tags:
+- name: "Token"
+  description: "Everything about your JWTToken"
+- name: "User"
+  description: "Everything about your Users"
+schemes:
+- "http"
+paths:
+  /login_check:
+    post:
+      tags:
+      - "Token"
+      summary: "Generate Token using username and Password"
+      description: ""
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Use generated token to all action below"
+        required: true
+        schema:
+          $ref: "#/definitions/Token"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Form Error"
+  /users:
+    get:
+      tags:
+      - "User"
+      summary: "Get List of Users, use token from /login_check"
+      description: ""
+      operationId: "getAll"
+      parameters:
+      - in: "header"
+        type: string
+        name: "Authorization"
+        description: "Bearer GENERATED_TOKEN"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Form Error"
+    post:
+      tags:
+      - "User"
+      summary: "Add a new User"
+      description: ""
+      operationId: "postUser"
+      parameters:
+      - in: "header"
+        type: string
+        name: "Authorization"
+        description: "Value should be 'Bearer GENERATED_TOKEN'"
+      - in: "body"
+        name: "body"
+        description: "User object that needs to be added with information"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "Form Error"
+  /users/{id}:
+    put:
+      tags:
+      - "User"
+      summary: "Update an existing User"
+      description: ""
+      operationId: "putUser"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        type: string
+        name: "Authorization"
+        description: "Value should be 'Bearer GENERATED_TOKEN'"
+      - in: "path"
+        type: "integer"
+        required: true
+        name: "id"
+      - in: "body"
+        name: "body"
+        description: "User object that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "ok"
+        404:
+          description: "User not found"
+    delete:
+      tags:
+      - "User"
+      summary: "Delete User"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "id"
+        description: "The user that needs to be deleted"
+        required: true
+        type: "string"
+      - in: "header"
+        type: string
+        name: "Authorization"
+        description: "Value should be 'Bearer GENERATED_TOKEN'"
+      responses:
+        200:
+          description: "ok"
+        404:
+          description: "User not found"
+definitions:
+  Token:
+    type: "object"
+    required:
+    - "username"
+    - "password"
+    properties:
+      username:
+        type: "string"
+        example: "admin"
+      password:
+        type: "string"
+        example: "master@pi"
+  User:
+    type: "object"
+    required:
+    - "firstName"
+    - "lastName"
+    - "email"
+    properties:
+      firstName:
+        type: "string"
+        example: "Ray"
+      lastName:
+        type: "integer"
+        format: "int64"
+        example: "Roland"
+      email:
+        type: "string"
+        example: "rayroland@test.com"
+        items:
+          type: "string"
+        description: "must be a valid Email"
+      username:
+        type: "string"
+        example: "rayroland"
+        items:
+          type: "string"
+        description: "your Username"
+      password:
+        type: "string"
+        example: "mypassword"
+      number:
+        type: "integer"
+        example: "971504782236"
+    xml:
+      name: "User"

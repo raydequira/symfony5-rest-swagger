@@ -26,16 +26,18 @@ class UserRepository extends ServiceEntityRepository
         $this->manager = $manager;
     }
 
-    public function inserUser($firstName, $lastName, $email, $number)
+    public function insertUser($firstName, $lastName, $email, $username, $password, $number)
     {
-        $userCollection = new User();
+        $userCollection = new User($username);
 
         $userCollection
             ->setFirstName($firstName)
             ->setLastName($lastName)
             ->setEmail($email)
+            ->setPassword($password)
             ->setNumber($number);
 
+        
         $this->manager->persist($userCollection);
         $this->manager->flush();
     }
@@ -56,6 +58,14 @@ class UserRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
         ;
+    }
+
+    public function removeUser(User $user): User
+    {
+        $this->manager->remove($user);
+        $this->manager->flush();
+
+        
     }
 
     /*public function __construct(ManagerRegistry $registry)

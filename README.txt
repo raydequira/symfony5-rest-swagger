@@ -17,11 +17,27 @@ Note:
 JWT Pass Pharse Private Pem: rayroland
 
 {
-	"firstname": "Ray",
-	"username": "admin",
-	"password": "master@pi",
-	"email": "admin@test.com"
+  "firstName": "Ray",
+  "lastName": "Roland",
+  "email": "rayroland@test.com",
+  "username": "rayroland",
+  "password": "mypassword",
+  "number": "971504781234"
 }
+
+#load db.sql to your mysql.
+
+#configure .env for your database config
 
 #run the app
 symfony server:start
+
+#open your xampp and run the mysql database.
+
+ACCESS via POSTman
+http://127.0.0.1:8000
+
+or ACCESS via SWAGGER
+http://127.0.0.1:8000/swagger-editor-master/index.html (use public/swagger.json)
+
+This is going to be your starting point for every API project the you will have if you want to use Symfony5 with JWT token

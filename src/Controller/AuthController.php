@@ -62,6 +62,11 @@ class AuthController extends ApiController
    */
   public function getToken(Request $request,JWTTokenManagerInterface $JWTManager,UserPasswordEncoderInterface $encoder)
   {
+    header('Access-Control-Allow-Origin: ');
+header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+header("Allow: GET, POST, OPTIONS, PUT, DELETE");
+
     $request = $this->transformJsonBody($request);
     $username = $request->get('username','');
     $password = $request->get('password','');

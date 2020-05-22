@@ -8,7 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\User;
 use App\Repository\UserRepository;
-
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * User controller.
@@ -24,22 +24,24 @@ class UserController
     }
 
     /**
-     * @Route("/users/", name="new_user", methods={"POST"})
+     * @Route("/users", name="new_user", methods={"POST"})
      */
-    public function add(Request $request): JsonResponse
+    public function postUser(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
         $firstName = $data['firstName'];
         $lastName = $data['lastName'];
         $email = $data['email'];
-        $number = $data['number'];
+        $username = $data['username'];
+        $password = $data['password'];        
+        $number = $data['number'];        
 
-        if (empty($firstName) || empty($lastName) || empty($email) || empty($number)) {
+        if (empty($firstName) || empty($lastName) || empty($email) || empty($username) || empty($password) || empty($number)) {
             throw new NotFoundHttpException('Expecting mandatory parameters!');
         }
-
-        $this->userRepository->inserUser($firstName, $lastName, $email, $number);
+        
+        $this->userRepository->insertUser($firstName, $lastName, $email, $username, $password, $number);
 
         return new JsonResponse(['status' => 'User created!'], Response::HTTP_CREATED);
     }
@@ -47,7 +49,7 @@ class UserController
     /**
      * @Route("/users/{id}", name="get_user", methods={"GET"})
      */
-    public function get($id): JsonResponse
+    public function getUsers($id): JsonResponse
     {
         $user = $this->userRepository->findOneBy(['id' => $id]);
 
@@ -86,10 +88,14 @@ class UserController
     /**
      * @Route("/users/{id}", name="edit_user", methods={"PUT"})
      */
-    public function update($id, Request $request): JsonResponse
+    public function putUser($id, Request $request): JsonResponse
     {
         $user = $this->userRepository->findOneBy(['id' => $id]);
         $data = json_decode($request->getContent(), true);
+
+        if (!$user) {
+            throw new NotFoundHttpException('User does not exist!');
+        }
 
         empty($data['firstName']) ? true : $user->setFirstName($data['firstName']);
         empty($data['lastName']) ? true : $user->setLastName($data['lastName']);
@@ -98,6 +104,23 @@ class UserController
 
         $updateUser = $this->userRepository->updateUser($user);
 
-        return new JsonResponse($updateUser->toArray(), Response::HTTP_OK);
+        return new JsonResponse(['status' => 'User updated!', 'data' => $updateUser->toArray()], Response::HTTP_OK);
     }
+
+    /**
+     * @Route("/users/{id}", name="delete_user", methods={"DELETE"})
+     */
+    public function deleteUser($id, Request $request): JsonResponse
+    {
+        $user = $this->userRepository->findOneBy(['id' => $id]);
+        
+        if (!$user) {
+            throw new NotFoundHttpException('User does not exist!');
+        }
+
+        $this->userRepository->removeUser($user);
+
+        return new JsonResponse(['status' => 'User deleted!'], Response::HTTP_OK);
+    }
+
 }
